@@ -8,6 +8,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage";
 import PropertyListPage from "./pages/PropertyListPage";
+import PropertyCreatePage from "./pages/PropertyCreatePage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/login" element={<IsAnon><LoginPage /></IsAnon>} />
         <Route path="/admin" element={<IsPrivate><DashboardPage /></IsPrivate>} />
         <Route path="/admin/properties" element={<IsPrivate><PropertyListPage /></IsPrivate>} />
+        <Route path="/admin/properties/create" element={<IsPrivate><PropertyCreatePage /></IsPrivate>} />
       </Routes>
     </div>
   );

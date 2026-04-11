@@ -9,6 +9,7 @@ import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage";
 import PropertyListPage from "./pages/PropertyListPage";
 import PropertyCreatePage from "./pages/PropertyCreatePage";
+import PropertyDetailsPage from "./pages/PropertyDetailsPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/admin" element={<IsPrivate><DashboardPage /></IsPrivate>} />
         <Route path="/admin/properties" element={<IsPrivate><PropertyListPage /></IsPrivate>} />
         <Route path="/admin/properties/create" element={<IsPrivate><PropertyCreatePage /></IsPrivate>} />
+        <Route path="/admin/properties/:propertyId" element={<IsPrivate><PropertyDetailsPage /></IsPrivate>} />
       </Routes>
     </div>
   );

@@ -11,6 +11,10 @@ import PropertyListPage from "./pages/PropertyListPage";
 import PropertyCreatePage from "./pages/PropertyCreatePage";
 import PropertyDetailsPage from "./pages/PropertyDetailsPage";
 import PropertyEditPage from "./pages/PropertyEditPage";
+import ClientListPage from "./pages/ClientListPage";
+import ClientCreatePage from "./pages/ClientCreatePage";
+import ClientDetailsPage from "./pages/ClientDetailsPage";
+import ClientEditPage from "./pages/ClientEditPage";
 
 function App() {
   return (
@@ -25,6 +29,10 @@ function App() {
         <Route path="/admin/properties/create" element={<IsPrivate><PropertyCreatePage /></IsPrivate>} />
         <Route path="/admin/properties/:propertyId" element={<IsPrivate><PropertyDetailsPage /></IsPrivate>} />
         <Route path="/admin/properties/edit/:propertyId" element={<IsPrivate><PropertyEditPage /></IsPrivate>} />
+        <Route path="/admin/clients" element={<IsPrivate><ClientListPage /></IsPrivate>} />
+        <Route path="/admin/clients/create" element={<IsPrivate><ClientCreatePage /></IsPrivate>} />
+        <Route path="/admin/clients/:clientId" element={<IsPrivate><ClientDetailsPage /></IsPrivate>} />
+        <Route path="/admin/clients/edit/:clientId" element={<IsPrivate><ClientEditPage /></IsPrivate>} />
       </Routes>
     </div>
   );

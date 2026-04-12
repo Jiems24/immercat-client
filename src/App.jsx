@@ -15,6 +15,10 @@ import ClientListPage from "./pages/ClientListPage";
 import ClientCreatePage from "./pages/ClientCreatePage";
 import ClientDetailsPage from "./pages/ClientDetailsPage";
 import ClientEditPage from "./pages/ClientEditPage";
+import OwnerListPage from "./pages/OwnerListPage";
+import OwnerCreatePage from "./pages/OwnerCreatePage";
+import OwnerDetailsPage from "./pages/OwnerDetailsPage";
+import OwnerEditPage from "./pages/OwnerEditPage";
 
 function App() {
   return (
@@ -33,6 +37,10 @@ function App() {
         <Route path="/admin/clients/create" element={<IsPrivate><ClientCreatePage /></IsPrivate>} />
         <Route path="/admin/clients/:clientId" element={<IsPrivate><ClientDetailsPage /></IsPrivate>} />
         <Route path="/admin/clients/edit/:clientId" element={<IsPrivate><ClientEditPage /></IsPrivate>} />
+        <Route path="/admin/owners" element={<IsPrivate><OwnerListPage /></IsPrivate>} />
+        <Route path="/admin/owners/create" element={<IsPrivate><OwnerCreatePage /></IsPrivate>} />
+        <Route path="/admin/owners/:ownerId" element={<IsPrivate><OwnerDetailsPage /></IsPrivate>} />
+        <Route path="/admin/owners/edit/:ownerId" element={<IsPrivate><OwnerEditPage /></IsPrivate>} />
       </Routes>
     </div>
   );

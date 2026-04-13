@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_URL } from "../config/api";
+import { Link } from "react-router-dom";
+
 
 function HomePage() {
   const [featuredProperties, setFeaturedProperties] = useState([]);
@@ -18,8 +20,8 @@ function HomePage() {
   return (
     <div className="HomePage">
       <div className="hero">
-        <h1>Immercat</h1>
-        <p>Encuentra tu lugar en Catalunya</p>
+        <h1>ImmerCAT</h1>
+        <p>Encuentra tu hogar en Cataluña</p>
         <Link to="/properties">
           <button>Ver inmuebles disponibles</button>
         </Link>
@@ -46,9 +48,7 @@ function HomePage() {
               )}
               <Link to={`/properties/${property._id}`}>Ver detalle</Link>
             </div>
-
           ))}
-
         </div>
       </div>
     </div>

@@ -19,6 +19,8 @@ import OwnerListPage from "./pages/OwnerListPage";
 import OwnerCreatePage from "./pages/OwnerCreatePage";
 import OwnerDetailsPage from "./pages/OwnerDetailsPage";
 import OwnerEditPage from "./pages/OwnerEditPage";
+import PublicPropertyListPage from "./pages/PublicPropertyListPage";
+import PublicPropertyDetailsPage from "./pages/PublicPropertyDetailsPage";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
 
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/properties" element={<PublicPropertyListPage />} />
+        <Route path="/properties/:propertyId" element={<PublicPropertyDetailsPage />} />
         <Route path="/login" element={<IsAnon><LoginPage /></IsAnon>} />
         <Route path="/admin" element={<IsPrivate><DashboardPage /></IsPrivate>} />
         <Route path="/admin/properties" element={<IsPrivate><PropertyListPage /></IsPrivate>} />

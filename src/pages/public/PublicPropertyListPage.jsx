@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { API_URL } from "../config/api";
+import { API_URL } from "../../config/api";
 
 function PublicPropertyListPage() {
   const [properties, setProperties] = useState([]);

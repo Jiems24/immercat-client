@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { API_URL } from "../config/api";
-import ClientCard from "../components/ClientCard";
+import { API_URL } from "../../config/api";
+import ClientCard from "../../components/ClientCard";
 
 function ClientListPage() {
   const [clients, setClients] = useState([]);

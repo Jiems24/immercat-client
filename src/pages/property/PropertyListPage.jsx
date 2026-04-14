@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { API_URL } from "../config/api";
-import PropertyCard from "../components/PropertyCard";
+import { API_URL } from "../../config/api";
+import PropertyCard from "../../components/PropertyCard";
 
 function PropertyListPage() {
   const [properties, setProperties] = useState([]);

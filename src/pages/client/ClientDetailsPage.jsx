@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { API_URL } from "../config/api";
+import { API_URL } from "../../config/api";
 
 function ClientDetailsPage() {
   const [client, setClient] = useState(null);

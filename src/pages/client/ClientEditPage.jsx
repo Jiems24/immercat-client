@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { API_URL } from "../config/api";
+import { API_URL } from "../../config/api";
 
-function ClientCreatePage() {
+function ClientEditPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,8 +14,28 @@ function ClientCreatePage() {
   const [demandZone, setDemandZone] = useState("");
   const [errorMessage, setErrorMessage] = useState(undefined);
 
+  const { clientId } = useParams();
   const navigate = useNavigate();
   const storedToken = localStorage.getItem("authToken");
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/clients/${clientId}`, {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      })
+      .then((response) => {
+        const client = response.data;
+        setFirstName(client.firstName || "");
+        setLastName(client.lastName || "");
+        setEmail(client.email || "");
+        setPhone(client.phone || "");
+        setDemandType(client.demandType || "");
+        setDemandPropertyType(client.demandPropertyType || "");
+        setDemandBudget(client.demandBudget || "");
+        setDemandZone(client.demandZone || "");
+      })
+      .catch((error) => console.log(error));
+  }, [clientId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -33,21 +53,21 @@ function ClientCreatePage() {
     if (demandZone) requestBody.demandZone = demandZone;
 
     axios
-      .post(`${API_URL}/api/clients`, requestBody, {
+      .put(`${API_URL}/api/clients/${clientId}`, requestBody, {
         headers: { Authorization: `Bearer ${storedToken}` },
       })
       .then(() => {
-        navigate("/admin/clients");
+        navigate(`/admin/clients/${clientId}`);
       })
       .catch((error) => {
-        const errorDescription = error.response?.data?.message || "Error creating client";
+        const errorDescription = error.response?.data?.message || "Error updating client";
         setErrorMessage(errorDescription);
       });
   };
 
   return (
-    <div className="ClientCreatePage">
-      <h1>Crear cliente</h1>
+    <div className="ClientEditPage">
+      <h1>Editar cliente</h1>
 
       <form onSubmit={handleSubmit}>
         <label>Nombre: *</label>
@@ -117,7 +137,7 @@ function ClientCreatePage() {
           onChange={(e) => setDemandZone(e.target.value)}
         />
 
-        <button type="submit">Crear cliente</button>
+        <button type="submit">Guardar cambios</button>
       </form>
 
       {errorMessage && <p className="error-message">{errorMessage}</p>}
@@ -125,4 +145,4 @@ function ClientCreatePage() {
   );
 }
 
-export default ClientCreatePage;
+export default ClientEditPage;

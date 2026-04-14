@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { API_URL } from "../config/api";
-import OwnerCard from "../components/OwnerCard";
+import { API_URL } from "../../config/api";
+import OwnerCard from "../../components/OwnerCard";
 
 function OwnerListPage() {
   const [owners, setOwners] = useState([]);

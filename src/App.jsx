@@ -7,20 +7,20 @@ import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import HomePage from "./pages/HomePage";
-import PropertyListPage from "./pages/PropertyListPage";
-import PropertyCreatePage from "./pages/PropertyCreatePage";
-import PropertyDetailsPage from "./pages/PropertyDetailsPage";
-import PropertyEditPage from "./pages/PropertyEditPage";
-import ClientListPage from "./pages/ClientListPage";
-import ClientCreatePage from "./pages/ClientCreatePage";
-import ClientDetailsPage from "./pages/ClientDetailsPage";
-import ClientEditPage from "./pages/ClientEditPage";
-import OwnerListPage from "./pages/OwnerListPage";
-import OwnerCreatePage from "./pages/OwnerCreatePage";
-import OwnerDetailsPage from "./pages/OwnerDetailsPage";
-import OwnerEditPage from "./pages/OwnerEditPage";
-import PublicPropertyListPage from "./pages/PublicPropertyListPage";
-import PublicPropertyDetailsPage from "./pages/PublicPropertyDetailsPage";
+import PropertyListPage from "./pages/property/PropertyListPage";
+import PropertyCreatePage from "./pages/property/PropertyCreatePage";
+import PropertyDetailsPage from "./pages/property/PropertyDetailsPage";
+import PropertyEditPage from "./pages/property/PropertyEditPage";
+import ClientListPage from "./pages/client/ClientListPage";
+import ClientCreatePage from "./pages/client/ClientCreatePage";
+import ClientDetailsPage from "./pages/client/ClientDetailsPage";
+import ClientEditPage from "./pages/client/ClientEditPage";
+import OwnerListPage from "./pages/owner/OwnerListPage";
+import OwnerCreatePage from "./pages/owner/OwnerCreatePage";
+import OwnerDetailsPage from "./pages/owner/OwnerDetailsPage";
+import OwnerEditPage from "./pages/owner/OwnerEditPage";
+import PublicPropertyListPage from "./pages/public/PublicPropertyListPage";
+import PublicPropertyDetailsPage from "./pages/public/PublicPropertyDetailsPage";
 
 function App() {
   return (

@@ -33,6 +33,17 @@ function PropertyDetailsPage() {
       .catch((error) => console.log(error));
   };
 
+  const handleRestore = () => {
+    axios
+      .put(
+        `${API_URL}/api/properties/${propertyId}`,
+        { isArchived: false },
+        { headers: { Authorization: `Bearer ${storedToken}` } }
+      )
+      .then(() => navigate("/admin/properties"))
+      .catch((error) => console.log(error));
+  };
+
   const handleDelete = () => {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que quieres eliminar este inmueble definitivamente?"
@@ -58,12 +69,12 @@ function PropertyDetailsPage() {
       <p><strong>Operación:</strong> {property.operationType}</p>
       <p><strong>Precio:</strong> {property.price.toLocaleString("es-ES")} €</p>
       <p><strong>Estado:</strong> {property.status}</p>
-      <p><strong>Ubicación:</strong> {property.location}</p>
-      <p><strong>Dirección:</strong> {property.address}</p>
-      <p><strong>Superficie:</strong> {property.squareMeters} m²</p>
-      <p><strong>Habitaciones:</strong> {property.rooms}</p>
-      <p><strong>Baños:</strong> {property.bathrooms}</p>
-      <p><strong>Descripción:</strong> {property.description}</p>
+      {property.location && <p><strong>Ubicación:</strong> {property.location}</p>}
+      {property.address && <p><strong>Dirección:</strong> {property.address}</p>}
+      {property.squareMeters && <p><strong>Superficie:</strong> {property.squareMeters} m²</p>}
+      {property.rooms && <p><strong>Habitaciones:</strong> {property.rooms}</p>}
+      {property.bathrooms && <p><strong>Baños:</strong> {property.bathrooms}</p>}
+      {property.description && <p><strong>Descripción:</strong> {property.description}</p>}
 
       {property.realOwner && (
         <p>
@@ -92,6 +103,10 @@ function PropertyDetailsPage() {
 
         {!property.isArchived && (
           <button onClick={handleArchive}>Archivar</button>
+        )}
+
+        {property.isArchived && (
+          <button onClick={handleRestore}>Restaurar</button>
         )}
 
         <button onClick={handleDelete}>Eliminar</button>

@@ -18,13 +18,13 @@ function PropertyEditPage() {
   const [realOwner, setRealOwner] = useState("");
   const [owners, setOwners] = useState([]);
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const { propertyId } = useParams();
   const navigate = useNavigate();
   const storedToken = localStorage.getItem("authToken");
 
   useEffect(() => {
-    // Cargar los datos del inmueble
     axios
       .get(`${API_URL}/api/properties/${propertyId}`, {
         headers: { Authorization: `Bearer ${storedToken}` },
@@ -46,7 +46,6 @@ function PropertyEditPage() {
       })
       .catch((error) => console.log(error));
 
-    // Cargar la lista de propietarios para el selector
     axios
       .get(`${API_URL}/api/owners`, {
         headers: { Authorization: `Bearer ${storedToken}` },
@@ -54,6 +53,43 @@ function PropertyEditPage() {
       .then((response) => setOwners(response.data))
       .catch((error) => console.log(error));
   }, [propertyId]);
+
+  const handleGenerateDescription = () => {
+    if (!propertyType || !operationType || !price) {
+      setErrorMessage("Rellena al menos tipo, operación y precio antes de generar la descripción.");
+      return;
+    }
+
+    setIsGenerating(true);
+    setErrorMessage(undefined);
+
+    const requestBody = {
+      title,
+      propertyType,
+      operationType,
+      price,
+      location,
+      squareMeters,
+      rooms,
+      bathrooms,
+    };
+
+    axios
+      .post(
+        `${API_URL}/api/generate-description`,
+        requestBody,
+        { headers: { Authorization: `Bearer ${storedToken}` } }
+      )
+      .then((response) => {
+        setDescription(response.data.description);
+        setIsGenerating(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setErrorMessage("Error al generar la descripción. Puedes escribirla manualmente.");
+        setIsGenerating(false);
+      });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -171,9 +207,17 @@ function PropertyEditPage() {
         />
 
         <label>Descripción:</label>
+        <button
+          type="button"
+          onClick={handleGenerateDescription}
+          disabled={isGenerating}
+        >
+          {isGenerating ? "Generando..." : "Generar descripción con IA"}
+        </button>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          disabled={isGenerating}
         />
 
         <label>Estado:</label>
@@ -201,6 +245,9 @@ function PropertyEditPage() {
         </select>
 
         <button type="submit">Guardar cambios</button>
+        <button type="button" onClick={() => navigate(`/admin/properties/${propertyId}`)}>
+          Cancelar
+        </button>
       </form>
 
       {errorMessage && <p className="error-message">{errorMessage}</p>}

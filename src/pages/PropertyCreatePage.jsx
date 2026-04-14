@@ -18,11 +18,11 @@ function PropertyCreatePage() {
   const [realOwner, setRealOwner] = useState("");
   const [owners, setOwners] = useState([]);
   const [errorMessage, setErrorMessage] = useState(undefined);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const navigate = useNavigate();
   const storedToken = localStorage.getItem("authToken");
 
-  // Cargar la lista de propietarios para el selector
   useEffect(() => {
     axios
       .get(`${API_URL}/api/owners`, {
@@ -31,6 +31,43 @@ function PropertyCreatePage() {
       .then((response) => setOwners(response.data))
       .catch((error) => console.log(error));
   }, []);
+
+  const handleGenerateDescription = () => {
+    if (!propertyType || !operationType || !price) {
+      setErrorMessage("Rellena al menos tipo, operación y precio antes de generar la descripción.");
+      return;
+    }
+
+    setIsGenerating(true);
+    setErrorMessage(undefined);
+
+    const requestBody = {
+      title,
+      propertyType,
+      operationType,
+      price,
+      location,
+      squareMeters,
+      rooms,
+      bathrooms,
+    };
+
+    axios
+      .post(
+        `${API_URL}/api/generate-description`,
+        requestBody,
+        { headers: { Authorization: `Bearer ${storedToken}` } }
+      )
+      .then((response) => {
+        setDescription(response.data.description);
+        setIsGenerating(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setErrorMessage("Error al generar la descripción. Puedes escribirla manualmente.");
+        setIsGenerating(false);
+      });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -49,7 +86,6 @@ function PropertyCreatePage() {
       status,
     };
 
-    // Solo añadir realOwner si se seleccionó uno
     if (realOwner) {
       requestBody.realOwner = realOwner;
     }
@@ -149,9 +185,17 @@ function PropertyCreatePage() {
         />
 
         <label>Descripción:</label>
+        <button
+          type="button"
+          onClick={handleGenerateDescription}
+          disabled={isGenerating}
+        >
+          {isGenerating ? "Generando..." : "Generar descripción con IA"}
+        </button>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          disabled={isGenerating}
         />
 
         <label>Estado:</label>
@@ -179,6 +223,9 @@ function PropertyCreatePage() {
         </select>
 
         <button type="submit">Crear inmueble</button>
+        <button type="button" onClick={() => navigate("/admin/properties")}>
+          Cancelar
+        </button>
       </form>
 
       {errorMessage && <p className="error-message">{errorMessage}</p>}

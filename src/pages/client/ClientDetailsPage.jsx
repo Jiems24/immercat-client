@@ -5,6 +5,7 @@ import { API_URL } from "../../config/api";
 
 function ClientDetailsPage() {
   const [client, setClient] = useState(null);
+  const [newNote, setNewNote] = useState(""); // NUEVO
   const { clientId } = useParams();
   const navigate = useNavigate();
   const storedToken = localStorage.getItem("authToken");
@@ -21,6 +22,25 @@ function ClientDetailsPage() {
   useEffect(() => {
     getClient();
   }, [clientId]);
+
+  // NUEVO
+  const handleAddNote = () => {
+    if (!newNote.trim()) return;
+
+    const updatedNotes = [...client.notes, newNote];
+
+    axios
+      .put(
+        `${API_URL}/api/clients/${clientId}`,
+        { notes: updatedNotes },
+        { headers: { Authorization: `Bearer ${storedToken}` } }
+      )
+      .then(() => {
+        setNewNote("");
+        getClient();
+      })
+      .catch((error) => console.log(error));
+  };
 
   const handleArchive = () => {
     axios
@@ -67,6 +87,26 @@ function ClientDetailsPage() {
       {!client.demandType && !client.demandPropertyType && !client.demandBudget && !client.demandZone && (
         <p>No hay demanda registrada.</p>
       )}
+
+      {/* NUEVO — sección de notas */}
+      <div className="notes-section">
+        <h2>Notas internas</h2>
+        {client.notes && client.notes.length > 0 ? (
+          <ul>
+            {client.notes.map((note, index) => (
+              <li key={index}>{note}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No hay notas.</p>
+        )}
+        <textarea
+          value={newNote}
+          onChange={(e) => setNewNote(e.target.value)}
+          placeholder="Añadir nota..."
+        />
+        <button type="button" onClick={handleAddNote}>Añadir nota</button>
+      </div>
 
       <div>
         <Link to={`/admin/clients/edit/${client._id}`}>

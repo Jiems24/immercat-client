@@ -5,6 +5,7 @@ import { API_URL } from "../../config/api";
 
 function PropertyDetailsPage() {
   const [property, setProperty] = useState(null);
+  const [newNote, setNewNote] = useState(""); // NUEVO
   const { propertyId } = useParams();
   const navigate = useNavigate();
   const storedToken = localStorage.getItem("authToken");
@@ -21,6 +22,25 @@ function PropertyDetailsPage() {
   useEffect(() => {
     getProperty();
   }, [propertyId]);
+
+  // NUEVO
+  const handleAddNote = () => {
+    if (!newNote.trim()) return;
+
+    const updatedNotes = [...property.notes, newNote];
+
+    axios
+      .put(
+        `${API_URL}/api/properties/${propertyId}`,
+        { notes: updatedNotes },
+        { headers: { Authorization: `Bearer ${storedToken}` } }
+      )
+      .then(() => {
+        setNewNote("");
+        getProperty();
+      })
+      .catch((error) => console.log(error));
+  };
 
   const handleArchive = () => {
     axios
@@ -64,6 +84,7 @@ function PropertyDetailsPage() {
   return (
     <div className="PropertyDetailsPage">
       <h1>{property.title}</h1>
+
       {property.images && property.images.length > 0 && (
         <div className="property-images">
           {property.images.map((url, index) => (
@@ -71,6 +92,7 @@ function PropertyDetailsPage() {
           ))}
         </div>
       )}
+
       <p><strong>Tipo:</strong> {property.propertyType}</p>
       <p><strong>Operación:</strong> {property.operationType}</p>
       <p><strong>Precio:</strong> {property.price.toLocaleString("es-ES")} €</p>
@@ -101,6 +123,26 @@ function PropertyDetailsPage() {
           <strong>Creado por:</strong> {property.owner.name}
         </p>
       )}
+
+      {/* NUEVO — sección de notas */}
+      <div className="notes-section">
+        <h2>Notas internas</h2>
+        {property.notes && property.notes.length > 0 ? (
+          <ul>
+            {property.notes.map((note, index) => (
+              <li key={index}>{note}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No hay notas.</p>
+        )}
+        <textarea
+          value={newNote}
+          onChange={(e) => setNewNote(e.target.value)}
+          placeholder="Añadir nota..."
+        />
+        <button type="button" onClick={handleAddNote}>Añadir nota</button>
+      </div>
 
       <div>
         <Link to={`/admin/properties/edit/${property._id}`}>

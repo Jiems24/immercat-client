@@ -64,17 +64,21 @@ function ClientDetailsPage() {
   };
 
   const handleArchive = () => {
-    axios
-      .put(
-        `${API_URL}/api/clients/${clientId}/archive`,
-        {},
-        { headers: { Authorization: `Bearer ${storedToken}` } }
-      )
-      .then(() => navigate("/admin/clients"))
-      .catch((error) => console.log(error));
+    const confirmArchive = window.confirm(
+      "¿Estás seguro de que quieres archivar este cliente?"
+    );
+    if (confirmArchive) {
+      axios
+        .put(
+          `${API_URL}/api/clients/${clientId}/archive`,
+          {},
+          { headers: { Authorization: `Bearer ${storedToken}` } }
+        )
+        .then(() => navigate("/admin/clients"))
+        .catch((error) => console.log(error));
+    }
   };
 
-  // NUEVO
   const handleRestore = () => {
     axios
       .put(
@@ -90,7 +94,6 @@ function ClientDetailsPage() {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que quieres eliminar este cliente definitivamente?"
     );
-
     if (confirmDelete) {
       axios
         .delete(`${API_URL}/api/clients/${clientId}`, {
@@ -174,7 +177,6 @@ function ClientDetailsPage() {
           <button onClick={handleArchive}>Archivar</button>
         )}
 
-        {/* NUEVO */}
         {client.isArchived && (
           <button onClick={handleRestore}>Restaurar</button>
         )}

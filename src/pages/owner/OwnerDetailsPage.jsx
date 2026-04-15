@@ -23,10 +23,26 @@ function OwnerDetailsPage() {
   }, [ownerId]);
 
   const handleArchive = () => {
+    const confirmArchive = window.confirm(
+      "¿Estás seguro de que quieres archivar este propietario?"
+    );
+    if (confirmArchive) {
+      axios
+        .put(
+          `${API_URL}/api/owners/${ownerId}/archive`,
+          {},
+          { headers: { Authorization: `Bearer ${storedToken}` } }
+        )
+        .then(() => navigate("/admin/owners"))
+        .catch((error) => console.log(error));
+    }
+  };
+
+  const handleRestore = () => {
     axios
       .put(
-        `${API_URL}/api/owners/${ownerId}/archive`,
-        {},
+        `${API_URL}/api/owners/${ownerId}`,
+        { isArchived: false },
         { headers: { Authorization: `Bearer ${storedToken}` } }
       )
       .then(() => navigate("/admin/owners"))
@@ -37,7 +53,6 @@ function OwnerDetailsPage() {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que quieres eliminar este propietario definitivamente?"
     );
-
     if (confirmDelete) {
       axios
         .delete(`${API_URL}/api/owners/${ownerId}`, {
@@ -66,6 +81,10 @@ function OwnerDetailsPage() {
 
         {!owner.isArchived && (
           <button onClick={handleArchive}>Archivar</button>
+        )}
+
+        {owner.isArchived && (
+          <button onClick={handleRestore}>Restaurar</button>
         )}
 
         <button onClick={handleDelete}>Eliminar</button>

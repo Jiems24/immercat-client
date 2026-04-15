@@ -34,14 +34,19 @@ function PropertyDetailsPage() {
   }, [propertyId]);
 
   const handleArchive = () => {
-    axios
-      .put(
-        `${API_URL}/api/properties/${propertyId}/archive`,
-        {},
-        { headers: { Authorization: `Bearer ${storedToken}` } }
-      )
-      .then(() => navigate("/admin/properties"))
-      .catch((error) => console.log(error));
+    const confirmArchive = window.confirm(
+      "¿Estás seguro de que quieres archivar este inmueble?"
+    );
+    if (confirmArchive) {
+      axios
+        .put(
+          `${API_URL}/api/properties/${propertyId}/archive`,
+          {},
+          { headers: { Authorization: `Bearer ${storedToken}` } }
+        )
+        .then(() => navigate("/admin/properties"))
+        .catch((error) => console.log(error));
+    }
   };
 
   const handleRestore = () => {
@@ -59,7 +64,6 @@ function PropertyDetailsPage() {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que quieres eliminar este inmueble definitivamente?"
     );
-
     if (confirmDelete) {
       axios
         .delete(`${API_URL}/api/properties/${propertyId}`, {
@@ -115,7 +119,6 @@ function PropertyDetailsPage() {
         </p>
       )}
 
-      {/* NUEVO — sección clientes interesados */}
       <div className="linked-notes-section">
         <h2>Clientes interesados</h2>
         {linkedNotes.length > 0 ? (

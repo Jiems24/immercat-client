@@ -17,6 +17,7 @@ function PropertyCreatePage() {
   const [status, setStatus] = useState("disponible");
   const [realOwner, setRealOwner] = useState("");
   const [owners, setOwners] = useState([]);
+  const [images, setImages] = useState([]); // NUEVO
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -31,6 +32,16 @@ function PropertyCreatePage() {
       .then((response) => setOwners(response.data))
       .catch((error) => console.log(error));
   }, []);
+
+  const handleImageChange = (e) => { // NUEVO
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length > 4) {
+      setErrorMessage("Máximo 4 fotos permitidas.");
+      return;
+    }
+    setImages(selectedFiles);
+    setErrorMessage(undefined);
+  };
 
   const handleGenerateDescription = () => {
     if (!propertyType || !operationType || !price) {
@@ -72,27 +83,31 @@ function PropertyCreatePage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const requestBody = {
-      title,
-      propertyType,
-      operationType,
-      price: Number(price),
-      location,
-      address,
-      squareMeters: squareMeters ? Number(squareMeters) : undefined,
-      rooms: rooms ? Number(rooms) : undefined,
-      bathrooms: bathrooms ? Number(bathrooms) : undefined,
-      description,
-      status,
-    };
+    const formData = new FormData(); // NUEVO — usamos FormData en lugar de JSON
 
-    if (realOwner) {
-      requestBody.realOwner = realOwner;
-    }
+    formData.append("title", title);
+    formData.append("propertyType", propertyType);
+    formData.append("operationType", operationType);
+    formData.append("price", Number(price));
+    formData.append("location", location);
+    formData.append("address", address);
+    if (squareMeters) formData.append("squareMeters", Number(squareMeters));
+    if (rooms) formData.append("rooms", Number(rooms));
+    if (bathrooms) formData.append("bathrooms", Number(bathrooms));
+    formData.append("description", description);
+    formData.append("status", status);
+    if (realOwner) formData.append("realOwner", realOwner);
+
+    images.forEach((image) => { // NUEVO — añadir cada imagen
+      formData.append("images", image);
+    });
 
     axios
-      .post(`${API_URL}/api/properties`, requestBody, {
-        headers: { Authorization: `Bearer ${storedToken}` },
+      .post(`${API_URL}/api/properties`, formData, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+          "Content-Type": "multipart/form-data",
+        },
       })
       .then(() => {
         navigate("/admin/properties");
@@ -197,6 +212,17 @@ function PropertyCreatePage() {
           onChange={(e) => setDescription(e.target.value)}
           disabled={isGenerating}
         />
+
+        <label>Fotos (máximo 4):</label> {/* NUEVO */}
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageChange}
+        />
+        {images.length > 0 && (
+          <p>{images.length} foto(s) seleccionada(s)</p>
+        )}
 
         <label>Estado:</label>
         <select

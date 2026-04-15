@@ -17,6 +17,8 @@ function PropertyEditPage() {
   const [status, setStatus] = useState("disponible");
   const [realOwner, setRealOwner] = useState("");
   const [owners, setOwners] = useState([]);
+  const [currentImages, setCurrentImages] = useState([]); // NUEVO — fotos actuales
+  const [images, setImages] = useState([]); // NUEVO — fotos nuevas
   const [errorMessage, setErrorMessage] = useState(undefined);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -43,6 +45,7 @@ function PropertyEditPage() {
         setDescription(property.description || "");
         setStatus(property.status || "disponible");
         setRealOwner(property.realOwner?._id || "");
+        setCurrentImages(property.images || []); // NUEVO
       })
       .catch((error) => console.log(error));
 
@@ -53,6 +56,16 @@ function PropertyEditPage() {
       .then((response) => setOwners(response.data))
       .catch((error) => console.log(error));
   }, [propertyId]);
+
+  const handleImageChange = (e) => { // NUEVO
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length > 4) {
+      setErrorMessage("Máximo 4 fotos permitidas.");
+      return;
+    }
+    setImages(selectedFiles);
+    setErrorMessage(undefined);
+  };
 
   const handleGenerateDescription = () => {
     if (!propertyType || !operationType || !price) {
@@ -94,27 +107,31 @@ function PropertyEditPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const requestBody = {
-      title,
-      propertyType,
-      operationType,
-      price: Number(price),
-      location,
-      address,
-      squareMeters: squareMeters ? Number(squareMeters) : undefined,
-      rooms: rooms ? Number(rooms) : undefined,
-      bathrooms: bathrooms ? Number(bathrooms) : undefined,
-      description,
-      status,
-    };
+    const formData = new FormData(); // NUEVO
 
-    if (realOwner) {
-      requestBody.realOwner = realOwner;
-    }
+    formData.append("title", title);
+    formData.append("propertyType", propertyType);
+    formData.append("operationType", operationType);
+    formData.append("price", Number(price));
+    formData.append("location", location);
+    formData.append("address", address);
+    if (squareMeters) formData.append("squareMeters", Number(squareMeters));
+    if (rooms) formData.append("rooms", Number(rooms));
+    if (bathrooms) formData.append("bathrooms", Number(bathrooms));
+    formData.append("description", description);
+    formData.append("status", status);
+    if (realOwner) formData.append("realOwner", realOwner);
+
+    images.forEach((image) => { // NUEVO
+      formData.append("images", image);
+    });
 
     axios
-      .put(`${API_URL}/api/properties/${propertyId}`, requestBody, {
-        headers: { Authorization: `Bearer ${storedToken}` },
+      .put(`${API_URL}/api/properties/${propertyId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+          "Content-Type": "multipart/form-data",
+        },
       })
       .then(() => {
         navigate(`/admin/properties/${propertyId}`);
@@ -219,6 +236,28 @@ function PropertyEditPage() {
           onChange={(e) => setDescription(e.target.value)}
           disabled={isGenerating}
         />
+
+        <label>Fotos actuales:</label> {/* NUEVO */}
+        {currentImages.length > 0 ? (
+          <div className="current-images">
+            {currentImages.map((url, index) => (
+              <img key={index} src={url} alt={`Foto ${index + 1}`} width="100" />
+            ))}
+          </div>
+        ) : (
+          <p>Sin fotos</p>
+        )}
+
+        <label>Subir fotos nuevas (máximo 4, reemplaza las actuales):</label> {/* NUEVO */}
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageChange}
+        />
+        {images.length > 0 && (
+          <p>{images.length} foto(s) seleccionada(s)</p>
+        )}
 
         <label>Estado:</label>
         <select

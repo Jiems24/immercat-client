@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 function PropertyCard({ property }) {
   return (
     <div className="PropertyCard">
+      {property.images && property.images.length > 0 && (
+        <img src={property.images[0]} alt={property.title} width="300" />
+      )}
       <h3>{property.title}</h3>
       <p>{property.propertyType} — {property.operationType}</p>
       <p>{property.price.toLocaleString("es-ES")} €</p>

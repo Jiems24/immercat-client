@@ -30,7 +30,7 @@ function PropertyDetailsPage() {
 
     axios
       .put(
-        `${API_URL}/api/properties/${propertyId}`,
+        `${API_URL}/api/properties/${propertyId}/notes`,
         { notes: updatedNotes },
         { headers: { Authorization: `Bearer ${storedToken}` } }
       )

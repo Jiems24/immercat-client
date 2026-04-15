@@ -30,7 +30,7 @@ function ClientDetailsPage() {
 
     axios
       .put(
-        `${API_URL}/api/clients/${clientId}`,
+        `${API_URL}/api/clients/${clientId}/notes`,
         { notes: updatedNotes },
         { headers: { Authorization: `Bearer ${storedToken}` } }
       )

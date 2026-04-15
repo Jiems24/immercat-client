@@ -5,7 +5,7 @@ import { API_URL } from "../../config/api";
 
 function ClientDetailsPage() {
   const [client, setClient] = useState(null);
-  const [newNote, setNewNote] = useState(""); // NUEVO
+  const [newNote, setNewNote] = useState("");
   const { clientId } = useParams();
   const navigate = useNavigate();
   const storedToken = localStorage.getItem("authToken");
@@ -23,11 +23,10 @@ function ClientDetailsPage() {
     getClient();
   }, [clientId]);
 
-  // NUEVO
   const handleAddNote = () => {
     if (!newNote.trim()) return;
 
-    const updatedNotes = [...client.notes, newNote];
+    const updatedNotes = [...client.notes, { text: newNote }]; // MODIFICADO
 
     axios
       .put(
@@ -88,13 +87,15 @@ function ClientDetailsPage() {
         <p>No hay demanda registrada.</p>
       )}
 
-      {/* NUEVO — sección de notas */}
       <div className="notes-section">
         <h2>Notas internas</h2>
         {client.notes && client.notes.length > 0 ? (
           <ul>
             {client.notes.map((note, index) => (
-              <li key={index}>{note}</li>
+              <li key={index}>
+                <span>{note.text}</span> {/* MODIFICADO */}
+                <small> — {new Date(note.createdAt).toLocaleString("es-ES")}</small>
+              </li>
             ))}
           </ul>
         ) : (

@@ -5,7 +5,7 @@ import { API_URL } from "../../config/api";
 
 function PropertyDetailsPage() {
   const [property, setProperty] = useState(null);
-  const [newNote, setNewNote] = useState(""); // NUEVO
+  const [newNote, setNewNote] = useState("");
   const { propertyId } = useParams();
   const navigate = useNavigate();
   const storedToken = localStorage.getItem("authToken");
@@ -23,11 +23,10 @@ function PropertyDetailsPage() {
     getProperty();
   }, [propertyId]);
 
-  // NUEVO
   const handleAddNote = () => {
     if (!newNote.trim()) return;
 
-    const updatedNotes = [...property.notes, newNote];
+    const updatedNotes = [...property.notes, { text: newNote }]; // MODIFICADO
 
     axios
       .put(
@@ -124,13 +123,15 @@ function PropertyDetailsPage() {
         </p>
       )}
 
-      {/* NUEVO — sección de notas */}
       <div className="notes-section">
         <h2>Notas internas</h2>
         {property.notes && property.notes.length > 0 ? (
           <ul>
             {property.notes.map((note, index) => (
-              <li key={index}>{note}</li>
+              <li key={index}>
+                <span>{note.text}</span> {/* MODIFICADO */}
+                <small> — {new Date(note.createdAt).toLocaleString("es-ES")}</small>
+              </li>
             ))}
           </ul>
         ) : (

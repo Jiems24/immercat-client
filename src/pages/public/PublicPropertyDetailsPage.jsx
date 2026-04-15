@@ -19,7 +19,13 @@ function PublicPropertyDetailsPage() {
   return (
     <div className="PublicPropertyDetailsPage">
       <h1>{property.title}</h1>
-
+      {property.images && property.images.length > 0 && (
+        <div className="property-images">
+          {property.images.map((url, index) => (
+            <img key={index} src={url} alt={`Foto ${index + 1}`} width="300" />
+          ))}
+        </div>
+      )}
       <p><strong>Tipo:</strong> {property.propertyType}</p>
       <p><strong>Operación:</strong> {property.operationType}</p>
       <p><strong>Precio:</strong> {property.price.toLocaleString("es-ES")} €</p>

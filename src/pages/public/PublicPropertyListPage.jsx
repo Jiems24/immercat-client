@@ -119,10 +119,12 @@ function PublicPropertyListPage() {
       {properties.length === 0 && (
         <p>No se han encontrado inmuebles con estos filtros.</p>
       )}
-
       <div className="public-properties">
         {properties.map((property) => (
           <div key={property._id} className="public-property-card">
+            {property.images && property.images.length > 0 && (
+              <img src={property.images[0]} alt={property.title} width="300" />
+            )}
             <h3>{property.title}</h3>
             <p>{property.propertyType} — {property.operationType}</p>
             <p>{property.price.toLocaleString("es-ES")} €</p>

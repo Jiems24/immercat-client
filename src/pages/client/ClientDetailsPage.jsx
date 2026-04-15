@@ -74,6 +74,18 @@ function ClientDetailsPage() {
       .catch((error) => console.log(error));
   };
 
+  // NUEVO
+  const handleRestore = () => {
+    axios
+      .put(
+        `${API_URL}/api/clients/${clientId}`,
+        { isArchived: false },
+        { headers: { Authorization: `Bearer ${storedToken}` } }
+      )
+      .then(() => navigate("/admin/clients"))
+      .catch((error) => console.log(error));
+  };
+
   const handleDelete = () => {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que quieres eliminar este cliente definitivamente?"
@@ -109,7 +121,6 @@ function ClientDetailsPage() {
         <p>No hay demanda registrada.</p>
       )}
 
-      {/* NUEVO — sección de visitas */}
       <div className="linked-notes-section">
         <h2>Visitas</h2>
 
@@ -161,6 +172,11 @@ function ClientDetailsPage() {
 
         {!client.isArchived && (
           <button onClick={handleArchive}>Archivar</button>
+        )}
+
+        {/* NUEVO */}
+        {client.isArchived && (
+          <button onClick={handleRestore}>Restaurar</button>
         )}
 
         <button onClick={handleDelete}>Eliminar</button>

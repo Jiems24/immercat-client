@@ -5,7 +5,7 @@ import { API_URL } from "../../config/api";
 
 function PropertyDetailsPage() {
   const [property, setProperty] = useState(null);
-  const [newNote, setNewNote] = useState("");
+  const [linkedNotes, setLinkedNotes] = useState([]);
   const { propertyId } = useParams();
   const navigate = useNavigate();
   const storedToken = localStorage.getItem("authToken");
@@ -19,27 +19,19 @@ function PropertyDetailsPage() {
       .catch((error) => console.log(error));
   };
 
-  useEffect(() => {
-    getProperty();
-  }, [propertyId]);
-
-  const handleAddNote = () => {
-    if (!newNote.trim()) return;
-
-    const updatedNotes = [...property.notes, { text: newNote }]; // MODIFICADO
-
+  const getLinkedNotes = () => {
     axios
-      .put(
-        `${API_URL}/api/properties/${propertyId}/notes`,
-        { notes: updatedNotes },
-        { headers: { Authorization: `Bearer ${storedToken}` } }
-      )
-      .then(() => {
-        setNewNote("");
-        getProperty();
+      .get(`${API_URL}/api/linked-notes/property/${propertyId}`, {
+        headers: { Authorization: `Bearer ${storedToken}` },
       })
+      .then((response) => setLinkedNotes(response.data))
       .catch((error) => console.log(error));
   };
+
+  useEffect(() => {
+    getProperty();
+    getLinkedNotes();
+  }, [propertyId]);
 
   const handleArchive = () => {
     axios
@@ -123,26 +115,23 @@ function PropertyDetailsPage() {
         </p>
       )}
 
-      <div className="notes-section">
-        <h2>Notas internas</h2>
-        {property.notes && property.notes.length > 0 ? (
+      {/* NUEVO — sección clientes interesados */}
+      <div className="linked-notes-section">
+        <h2>Clientes interesados</h2>
+        {linkedNotes.length > 0 ? (
           <ul>
-            {property.notes.map((note, index) => (
-              <li key={index}>
-                <span>{note.text}</span> {/* MODIFICADO */}
-                <small> — {new Date(note.createdAt).toLocaleString("es-ES")}</small>
+            {linkedNotes.map((note) => (
+              <li key={note._id}>
+                <strong>{note.client.firstName} {note.client.lastName}</strong>
+                <span> — {note.client.phone}</span>
+                <p>{note.text}</p>
+                <small>{new Date(note.createdAt).toLocaleString("es-ES")}</small>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No hay notas.</p>
+          <p>No hay clientes interesados registrados.</p>
         )}
-        <textarea
-          value={newNote}
-          onChange={(e) => setNewNote(e.target.value)}
-          placeholder="Añadir nota..."
-        />
-        <button type="button" onClick={handleAddNote}>Añadir nota</button>
       </div>
 
       <div>

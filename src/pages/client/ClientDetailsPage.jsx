@@ -5,6 +5,9 @@ import { API_URL } from "../../config/api";
 
 function ClientDetailsPage() {
   const [client, setClient] = useState(null);
+  const [linkedNotes, setLinkedNotes] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [selectedProperty, setSelectedProperty] = useState("");
   const [newNote, setNewNote] = useState("");
   const { clientId } = useParams();
   const navigate = useNavigate();
@@ -19,24 +22,43 @@ function ClientDetailsPage() {
       .catch((error) => console.log(error));
   };
 
+  const getLinkedNotes = () => {
+    axios
+      .get(`${API_URL}/api/linked-notes/client/${clientId}`, {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      })
+      .then((response) => setLinkedNotes(response.data))
+      .catch((error) => console.log(error));
+  };
+
+  const getProperties = () => {
+    axios
+      .get(`${API_URL}/api/properties`, {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      })
+      .then((response) => setProperties(response.data))
+      .catch((error) => console.log(error));
+  };
+
   useEffect(() => {
     getClient();
+    getLinkedNotes();
+    getProperties();
   }, [clientId]);
 
-  const handleAddNote = () => {
-    if (!newNote.trim()) return;
-
-    const updatedNotes = [...client.notes, { text: newNote }]; // MODIFICADO
+  const handleAddLinkedNote = () => {
+    if (!newNote.trim() || !selectedProperty) return;
 
     axios
-      .put(
-        `${API_URL}/api/clients/${clientId}/notes`,
-        { notes: updatedNotes },
+      .post(
+        `${API_URL}/api/linked-notes`,
+        { text: newNote, client: clientId, property: selectedProperty },
         { headers: { Authorization: `Bearer ${storedToken}` } }
       )
       .then(() => {
         setNewNote("");
-        getClient();
+        setSelectedProperty("");
+        getLinkedNotes();
       })
       .catch((error) => console.log(error));
   };
@@ -87,26 +109,49 @@ function ClientDetailsPage() {
         <p>No hay demanda registrada.</p>
       )}
 
-      <div className="notes-section">
-        <h2>Notas internas</h2>
-        {client.notes && client.notes.length > 0 ? (
+      {/* NUEVO — sección de visitas */}
+      <div className="linked-notes-section">
+        <h2>Visitas</h2>
+
+        <select
+          value={selectedProperty}
+          onChange={(e) => setSelectedProperty(e.target.value)}
+        >
+          <option value="">-- Seleccionar inmueble --</option>
+          {properties.map((property) => (
+            <option key={property._id} value={property._id}>
+              {property.title}
+            </option>
+          ))}
+        </select>
+
+        <textarea
+          value={newNote}
+          onChange={(e) => setNewNote(e.target.value)}
+          placeholder="Añadir nota de visita..."
+        />
+
+        <button
+          type="button"
+          onClick={handleAddLinkedNote}
+          disabled={!newNote.trim() || !selectedProperty}
+        >
+          Añadir visita
+        </button>
+
+        {linkedNotes.length > 0 ? (
           <ul>
-            {client.notes.map((note, index) => (
-              <li key={index}>
-                <span>{note.text}</span> {/* MODIFICADO */}
-                <small> — {new Date(note.createdAt).toLocaleString("es-ES")}</small>
+            {linkedNotes.map((note) => (
+              <li key={note._id}>
+                <strong>{note.property.title}</strong>
+                <p>{note.text}</p>
+                <small>{new Date(note.createdAt).toLocaleString("es-ES")}</small>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No hay notas.</p>
+          <p>No hay visitas registradas.</p>
         )}
-        <textarea
-          value={newNote}
-          onChange={(e) => setNewNote(e.target.value)}
-          placeholder="Añadir nota..."
-        />
-        <button type="button" onClick={handleAddNote}>Añadir nota</button>
       </div>
 
       <div>

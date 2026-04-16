@@ -1,0 +1,67 @@
+.PropertyEditPage {
+  max-width: 800px;
+}
+
+.PropertyEditPage h1 {
+  margin-bottom: 24px;
+}
+
+.current-images {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.current-img-thumb {
+  width: 100px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.photos-count {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-top: 6px;
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.btn-file {
+  background: var(--color-card);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease;
+}
+
+.btn-file:hover {
+  border-color: var(--color-border-hover);
+}
+
+.file-input-text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .current-img-thumb {
+    width: 80px;
+    height: 64px;
+  }
+}

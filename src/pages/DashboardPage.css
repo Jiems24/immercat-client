@@ -1,0 +1,122 @@
+.DashboardPage {
+  max-width: 1000px;
+}
+
+.dashboard-header {
+  margin-bottom: 32px;
+}
+
+.dashboard-welcome {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  margin-top: 4px;
+}
+
+.dashboard-section {
+  margin-bottom: 32px;
+}
+
+.dashboard-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.dashboard-counters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.dashboard-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dashboard-card h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.dashboard-card-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.dashboard-card-number {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+  margin: 4px 0;
+}
+
+.dashboard-card-sub {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.dashboard-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dashboard-stat-row:last-child {
+  border-bottom: none;
+}
+
+.dashboard-stat-label {
+  font-size: 0.875rem;
+  color: var(--color-text);
+  text-transform: capitalize;
+}
+
+.dashboard-stat-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.loading {
+  padding: 32px 24px;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .dashboard-counters {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card-number {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-card {
+    padding: 16px;
+  }
+}

@@ -1,3 +1,5 @@
+import './OwnerEditPage.css'
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -35,23 +37,12 @@ function OwnerEditPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const requestBody = {
-      firstName,
-      lastName,
-      phone,
-      email,
-      dni,
-      address,
-    };
-
+    const requestBody = { firstName, lastName, phone, email, dni, address };
     axios
       .put(`${API_URL}/api/owners/${ownerId}`, requestBody, {
         headers: { Authorization: `Bearer ${storedToken}` },
       })
-      .then(() => {
-        navigate(`/admin/owners/${ownerId}`);
-      })
+      .then(() => navigate(`/admin/owners/${ownerId}`))
       .catch((error) => {
         const errorDescription = error.response?.data?.message || "Error updating owner";
         setErrorMessage(errorDescription);
@@ -59,60 +50,47 @@ function OwnerEditPage() {
   };
 
   return (
-    <div className="OwnerEditPage">
+    <div className="OwnerEditPage page-container">
       <h1>Editar propietario</h1>
 
       <form onSubmit={handleSubmit}>
-        <label>Nombre: *</label>
-        <input
-          type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          required
-        />
+        <div className="form-card">
+          <div className="form-section-title">Datos del propietario</div>
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Nombre <span className="required">*</span></label>
+              <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Apellidos <span className="required">*</span></label>
+              <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Teléfono <span className="required">*</span></label>
+              <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label>DNI <span className="required">*</span></label>
+              <input type="text" value={dni} onChange={(e) => setDni(e.target.value)} required />
+            </div>
+            <div className="form-group">
+              <label>Dirección</label>
+              <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+            </div>
+          </div>
+        </div>
 
-        <label>Apellidos: *</label>
-        <input
-          type="text"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          required
-        />
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-        <label>Teléfono: *</label>
-        <input
-          type="text"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          required
-        />
-
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <label>DNI: *</label>
-        <input
-          type="text"
-          value={dni}
-          onChange={(e) => setDni(e.target.value)}
-          required
-        />
-
-        <label>Dirección:</label>
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-        />
-
-        <button type="submit">Guardar cambios</button>
+        <div className="form-actions">
+          <button type="submit" className="btn-primary">Guardar cambios</button>
+          <button type="button" className="btn-secondary" onClick={() => navigate(`/admin/owners/${ownerId}`)}>Cancelar</button>
+        </div>
       </form>
-
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
     </div>
   );
 }

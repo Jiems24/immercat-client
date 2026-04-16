@@ -1,3 +1,5 @@
+import './ClientListPage.css'
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -40,26 +42,33 @@ function ClientListPage() {
   };
 
   return (
-    <div className="ClientListPage">
-      <h1>{showArchived ? "Clientes archivados" : "Clientes"}</h1>
-
-      <button onClick={() => setShowArchived(!showArchived)}>
-        {showArchived ? "Ver activos" : "Ver archivados"}
-      </button>
-
-      {!showArchived && (
-        <Link to="/admin/clients/create">
-          <button>Crear cliente</button>
-        </Link>
-      )}
+    <div className="ClientListPage page-container">
+      <div className="list-header">
+        <h1>{showArchived ? "Clientes archivados" : "Clientes"}</h1>
+        <div className="list-actions">
+          <button
+            className={showArchived ? "btn-primary" : "btn-secondary"}
+            onClick={() => setShowArchived(!showArchived)}
+          >
+            {showArchived ? "Ver activos" : "Ver archivados"}
+          </button>
+          {!showArchived && (
+            <Link to="/admin/clients/create">
+              <button className="btn-primary">Crear cliente</button>
+            </Link>
+          )}
+        </div>
+      </div>
 
       {clients.length === 0 && (
-        <p>{showArchived ? "No hay clientes archivados." : "No hay clientes."}</p>
+        <p className="empty-message">{showArchived ? "No hay clientes archivados." : "No hay clientes."}</p>
       )}
 
-      {clients.map((client) => (
-        <ClientCard key={client._id} client={client} />
-      ))}
+      <div className="list-grid">
+        {clients.map((client) => (
+          <ClientCard key={client._id} client={client} />
+        ))}
+      </div>
 
       {totalPages > 1 && (
         <div className="pagination">

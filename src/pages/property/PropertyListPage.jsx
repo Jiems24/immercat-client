@@ -1,3 +1,5 @@
+import './PropertyListPage.css'
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -40,26 +42,33 @@ function PropertyListPage() {
   };
 
   return (
-    <div className="PropertyListPage">
-      <h1>{showArchived ? "Inmuebles archivados" : "Inmuebles"}</h1>
-
-      <button onClick={() => setShowArchived(!showArchived)}>
-        {showArchived ? "Ver activos" : "Ver archivados"}
-      </button>
-
-      {!showArchived && (
-        <Link to="/admin/properties/create">
-          <button>Crear inmueble</button>
-        </Link>
-      )}
+    <div className="PropertyListPage page-container">
+      <div className="list-header">
+        <h1>{showArchived ? "Inmuebles archivados" : "Inmuebles"}</h1>
+        <div className="list-actions">
+          <button
+            className={showArchived ? "btn-primary" : "btn-secondary"}
+            onClick={() => setShowArchived(!showArchived)}
+          >
+            {showArchived ? "Ver activos" : "Ver archivados"}
+          </button>
+          {!showArchived && (
+            <Link to="/admin/properties/create">
+              <button className="btn-primary">Crear inmueble</button>
+            </Link>
+          )}
+        </div>
+      </div>
 
       {properties.length === 0 && (
-        <p>{showArchived ? "No hay inmuebles archivados." : "No hay inmuebles."}</p>
+        <p className="empty-message">{showArchived ? "No hay inmuebles archivados." : "No hay inmuebles."}</p>
       )}
 
-      {properties.map((property) => (
-        <PropertyCard key={property._id} property={property} />
-      ))}
+      <div className="list-grid">
+        {properties.map((property) => (
+          <PropertyCard key={property._id} property={property} />
+        ))}
+      </div>
 
       {totalPages > 1 && (
         <div className="pagination">

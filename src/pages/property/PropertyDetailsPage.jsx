@@ -1,3 +1,5 @@
+import './PropertyDetailsPage.css'
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
@@ -34,16 +36,10 @@ function PropertyDetailsPage() {
   }, [propertyId]);
 
   const handleArchive = () => {
-    const confirmArchive = window.confirm(
-      "¿Estás seguro de que quieres archivar este inmueble?"
-    );
+    const confirmArchive = window.confirm("¿Estás seguro de que quieres archivar este inmueble?");
     if (confirmArchive) {
       axios
-        .put(
-          `${API_URL}/api/properties/${propertyId}/archive`,
-          {},
-          { headers: { Authorization: `Bearer ${storedToken}` } }
-        )
+        .put(`${API_URL}/api/properties/${propertyId}/archive`, {}, { headers: { Authorization: `Bearer ${storedToken}` } })
         .then(() => navigate("/admin/properties"))
         .catch((error) => console.log(error));
     }
@@ -51,109 +47,153 @@ function PropertyDetailsPage() {
 
   const handleRestore = () => {
     axios
-      .put(
-        `${API_URL}/api/properties/${propertyId}`,
-        { isArchived: false },
-        { headers: { Authorization: `Bearer ${storedToken}` } }
-      )
+      .put(`${API_URL}/api/properties/${propertyId}`, { isArchived: false }, { headers: { Authorization: `Bearer ${storedToken}` } })
       .then(() => navigate("/admin/properties"))
       .catch((error) => console.log(error));
   };
 
   const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "¿Estás seguro de que quieres eliminar este inmueble definitivamente?"
-    );
+    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este inmueble definitivamente?");
     if (confirmDelete) {
       axios
-        .delete(`${API_URL}/api/properties/${propertyId}`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
-        })
+        .delete(`${API_URL}/api/properties/${propertyId}`, { headers: { Authorization: `Bearer ${storedToken}` } })
         .then(() => navigate("/admin/properties"))
         .catch((error) => console.log(error));
     }
   };
 
-  if (!property) return <p>Cargando...</p>;
+  if (!property) return <p className="loading">Cargando...</p>;
 
   return (
-    <div className="PropertyDetailsPage">
-      <h1>{property.title}</h1>
+    <div className="PropertyDetailsPage page-container">
 
       {property.images && property.images.length > 0 && (
         <div className="property-images">
           {property.images.map((url, index) => (
-            <img key={index} src={url} alt={`Foto ${index + 1}`} width="300" />
+            <img key={index} src={url} alt={`Foto ${index + 1}`} className="property-detail-img" />
           ))}
         </div>
       )}
 
-      <p><strong>Tipo:</strong> {property.propertyType}</p>
-      <p><strong>Operación:</strong> {property.operationType}</p>
-      <p><strong>Precio:</strong> {property.price.toLocaleString("es-ES")} €</p>
-      <p><strong>Estado:</strong> {property.status}</p>
-      {property.location && <p><strong>Ubicación:</strong> {property.location}</p>}
-      {property.address && <p><strong>Dirección:</strong> {property.address}</p>}
-      {property.squareMeters && <p><strong>Superficie:</strong> {property.squareMeters} m²</p>}
-      {property.rooms && <p><strong>Habitaciones:</strong> {property.rooms}</p>}
-      {property.bathrooms && <p><strong>Baños:</strong> {property.bathrooms}</p>}
-      {property.description && <p><strong>Descripción:</strong> {property.description}</p>}
-
-      {property.realOwner && (
-        <p>
-          <strong>Propietario:</strong>{" "}
-          {property.realOwner.firstName} {property.realOwner.lastName}
-        </p>
-      )}
-
-      {property.agency && (
-        <p>
-          <strong>Inmobiliaria:</strong>{" "}
-          {property.agency.name} ({property.agency.city})
-        </p>
-      )}
-
-      {property.owner && (
-        <p>
-          <strong>Creado por:</strong> {property.owner.name}
-        </p>
-      )}
-
-      <div className="linked-notes-section">
-        <h2>Clientes interesados</h2>
-        {linkedNotes.length > 0 ? (
-          <ul>
-            {linkedNotes.map((note) => (
-              <li key={note._id}>
-                <strong>{note.client.firstName} {note.client.lastName}</strong>
-                <span> — {note.client.phone}</span>
-                <p>{note.text}</p>
-                <small>{new Date(note.createdAt).toLocaleString("es-ES")}</small>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No hay clientes interesados registrados.</p>
-        )}
+      <div className="property-detail-header">
+        <h1>{property.title}</h1>
+        <span className={`badge badge-${property.status}`}>{property.status}</span>
       </div>
 
-      <div>
+      <div className="property-detail-body">
+        <div className="property-detail-main">
+          <div className="form-card">
+            <div className="form-section-title">Información</div>
+            <div className="property-detail-grid">
+              <div className="property-detail-item">
+                <span className="detail-label">Tipo</span>
+                <span className="detail-value">{property.propertyType}</span>
+              </div>
+              <div className="property-detail-item">
+                <span className="detail-label">Operación</span>
+                <span className="detail-value">{property.operationType}</span>
+              </div>
+              <div className="property-detail-item">
+                <span className="detail-label">Precio</span>
+                <span className="detail-value detail-price">{property.price.toLocaleString("es-ES")} €</span>
+              </div>
+              {property.location && (
+                <div className="property-detail-item">
+                  <span className="detail-label">Ubicación</span>
+                  <span className="detail-value">{property.location}</span>
+                </div>
+              )}
+              {property.address && (
+                <div className="property-detail-item">
+                  <span className="detail-label">Dirección</span>
+                  <span className="detail-value">{property.address}</span>
+                </div>
+              )}
+              {property.squareMeters && (
+                <div className="property-detail-item">
+                  <span className="detail-label">Superficie</span>
+                  <span className="detail-value">{property.squareMeters} m²</span>
+                </div>
+              )}
+              {property.rooms && (
+                <div className="property-detail-item">
+                  <span className="detail-label">Habitaciones</span>
+                  <span className="detail-value">{property.rooms}</span>
+                </div>
+              )}
+              {property.bathrooms && (
+                <div className="property-detail-item">
+                  <span className="detail-label">Baños</span>
+                  <span className="detail-value">{property.bathrooms}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {property.description && (
+            <div className="form-card">
+              <div className="form-section-title">Descripción</div>
+              <p className="property-description">{property.description}</p>
+            </div>
+          )}
+
+          <div className="form-card">
+            <div className="form-section-title">Detalles adicionales</div>
+            {property.realOwner && (
+              <div className="property-detail-item">
+                <span className="detail-label">Propietario</span>
+                <span className="detail-value">{property.realOwner.firstName} {property.realOwner.lastName}</span>
+              </div>
+            )}
+            {property.agency && (
+              <div className="property-detail-item">
+                <span className="detail-label">Inmobiliaria</span>
+                <span className="detail-value">{property.agency.name} — {property.agency.city}</span>
+              </div>
+            )}
+            {property.owner && (
+              <div className="property-detail-item">
+                <span className="detail-label">Creado por</span>
+                <span className="detail-value">{property.owner.name}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="form-card linked-notes-section">
+          <div className="form-section-title">Clientes interesados</div>
+          {linkedNotes.length > 0 ? (
+            <ul className="linked-notes-list">
+              {linkedNotes.map((note) => (
+                <li key={note._id} className="linked-note-item">
+                  <div className="linked-note-client">
+                    <strong>{note.client.firstName} {note.client.lastName}</strong>
+                    <span> — {note.client.phone}</span>
+                  </div>
+                  <p className="linked-note-text">{note.text}</p>
+                  <small className="linked-note-date">{new Date(note.createdAt).toLocaleString("es-ES")}</small>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="empty-message">No hay clientes interesados registrados.</p>
+          )}
+        </div>
+      </div>
+
+      <div className="form-actions">
         <Link to={`/admin/properties/edit/${property._id}`}>
-          <button>Editar</button>
+          <button className="btn-primary">Editar</button>
         </Link>
-
         {!property.isArchived && (
-          <button onClick={handleArchive}>Archivar</button>
+          <button className="btn-warning" onClick={handleArchive}>Archivar</button>
         )}
-
         {property.isArchived && (
-          <button onClick={handleRestore}>Restaurar</button>
+          <button className="btn-success" onClick={handleRestore}>Restaurar</button>
         )}
-
-        <button onClick={handleDelete}>Eliminar</button>
-
+        <button className="btn-danger" onClick={handleDelete}>Eliminar</button>
         <Link to="/admin/properties">
-          <button>Volver al listado</button>
+          <button className="btn-secondary">Volver al listado</button>
         </Link>
       </div>
     </div>

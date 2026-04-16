@@ -1,3 +1,5 @@
+import './ClientDetailsPage.css'
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
@@ -48,143 +50,145 @@ function ClientDetailsPage() {
 
   const handleAddLinkedNote = () => {
     if (!newNote.trim() || !selectedProperty) return;
-
     axios
-      .post(
-        `${API_URL}/api/linked-notes`,
-        { text: newNote, client: clientId, property: selectedProperty },
-        { headers: { Authorization: `Bearer ${storedToken}` } }
-      )
-      .then(() => {
-        setNewNote("");
-        setSelectedProperty("");
-        getLinkedNotes();
-      })
+      .post(`${API_URL}/api/linked-notes`, { text: newNote, client: clientId, property: selectedProperty }, { headers: { Authorization: `Bearer ${storedToken}` } })
+      .then(() => { setNewNote(""); setSelectedProperty(""); getLinkedNotes(); })
       .catch((error) => console.log(error));
   };
 
   const handleArchive = () => {
-    const confirmArchive = window.confirm(
-      "¿Estás seguro de que quieres archivar este cliente?"
-    );
+    const confirmArchive = window.confirm("¿Estás seguro de que quieres archivar este cliente?");
     if (confirmArchive) {
-      axios
-        .put(
-          `${API_URL}/api/clients/${clientId}/archive`,
-          {},
-          { headers: { Authorization: `Bearer ${storedToken}` } }
-        )
+      axios.put(`${API_URL}/api/clients/${clientId}/archive`, {}, { headers: { Authorization: `Bearer ${storedToken}` } })
         .then(() => navigate("/admin/clients"))
         .catch((error) => console.log(error));
     }
   };
 
   const handleRestore = () => {
-    axios
-      .put(
-        `${API_URL}/api/clients/${clientId}`,
-        { isArchived: false },
-        { headers: { Authorization: `Bearer ${storedToken}` } }
-      )
+    axios.put(`${API_URL}/api/clients/${clientId}`, { isArchived: false }, { headers: { Authorization: `Bearer ${storedToken}` } })
       .then(() => navigate("/admin/clients"))
       .catch((error) => console.log(error));
   };
 
   const handleDelete = () => {
-    const confirmDelete = window.confirm(
-      "¿Estás seguro de que quieres eliminar este cliente definitivamente?"
-    );
+    const confirmDelete = window.confirm("¿Estás seguro de que quieres eliminar este cliente definitivamente?");
     if (confirmDelete) {
-      axios
-        .delete(`${API_URL}/api/clients/${clientId}`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
-        })
+      axios.delete(`${API_URL}/api/clients/${clientId}`, { headers: { Authorization: `Bearer ${storedToken}` } })
         .then(() => navigate("/admin/clients"))
         .catch((error) => console.log(error));
     }
   };
 
-  if (!client) return <p>Cargando...</p>;
+  if (!client) return <p className="loading">Cargando...</p>;
 
   return (
-    <div className="ClientDetailsPage">
-      <h1>{client.firstName} {client.lastName}</h1>
+    <div className="ClientDetailsPage page-container">
+      <div className="detail-header">
+        <h1>{client.firstName} {client.lastName}</h1>
+      </div>
 
-      <h2>Datos de contacto</h2>
-      <p><strong>Teléfono:</strong> {client.phone}</p>
-      {client.email && <p><strong>Email:</strong> {client.email}</p>}
+      <div className="form-card">
+        <div className="form-section-title">Datos de contacto</div>
+        <div className="property-detail-grid">
+          <div className="property-detail-item">
+            <span className="detail-label">Teléfono</span>
+            <span className="detail-value">{client.phone}</span>
+          </div>
+          {client.email && (
+            <div className="property-detail-item">
+              <span className="detail-label">Email</span>
+              <span className="detail-value">{client.email}</span>
+            </div>
+          )}
+        </div>
+      </div>
 
-      <h2>Demanda</h2>
-      {client.demandType && <p><strong>Tipo:</strong> {client.demandType}</p>}
-      {client.demandPropertyType && <p><strong>Inmueble que busca:</strong> {client.demandPropertyType}</p>}
-      {client.demandBudget && <p><strong>Presupuesto:</strong> {client.demandBudget.toLocaleString("es-ES")} €</p>}
-      {client.demandZone && <p><strong>Zona:</strong> {client.demandZone}</p>}
+      <div className="form-card">
+        <div className="form-section-title">Demanda</div>
+        {client.demandType || client.demandPropertyType || client.demandBudget || client.demandZone ? (
+          <div className="property-detail-grid">
+            {client.demandType && (
+              <div className="property-detail-item">
+                <span className="detail-label">Tipo</span>
+                <span className="detail-value">{client.demandType}</span>
+              </div>
+            )}
+            {client.demandPropertyType && (
+              <div className="property-detail-item">
+                <span className="detail-label">Inmueble que busca</span>
+                <span className="detail-value">{client.demandPropertyType}</span>
+              </div>
+            )}
+            {client.demandBudget && (
+              <div className="property-detail-item">
+                <span className="detail-label">Presupuesto</span>
+                <span className="detail-value detail-price">{client.demandBudget.toLocaleString("es-ES")} €</span>
+              </div>
+            )}
+            {client.demandZone && (
+              <div className="property-detail-item">
+                <span className="detail-label">Zona</span>
+                <span className="detail-value">{client.demandZone}</span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <p className="empty-message">No hay demanda registrada.</p>
+        )}
+      </div>
 
-      {!client.demandType && !client.demandPropertyType && !client.demandBudget && !client.demandZone && (
-        <p>No hay demanda registrada.</p>
-      )}
-
-      <div className="linked-notes-section">
-        <h2>Visitas</h2>
-
-        <select
-          value={selectedProperty}
-          onChange={(e) => setSelectedProperty(e.target.value)}
-        >
-          <option value="">-- Seleccionar inmueble --</option>
-          {properties.map((property) => (
-            <option key={property._id} value={property._id}>
-              {property.title}
-            </option>
-          ))}
-        </select>
-
-        <textarea
-          value={newNote}
-          onChange={(e) => setNewNote(e.target.value)}
-          placeholder="Añadir nota de visita..."
-        />
-
-        <button
-          type="button"
-          onClick={handleAddLinkedNote}
-          disabled={!newNote.trim() || !selectedProperty}
-        >
-          Añadir visita
-        </button>
+      <div className="form-card">
+        <div className="form-section-title">Visitas</div>
+        <div className="visits-form">
+          <div className="form-group">
+            <label>Inmueble</label>
+            <select value={selectedProperty} onChange={(e) => setSelectedProperty(e.target.value)}>
+              <option value="">-- Seleccionar inmueble --</option>
+              {properties.map((property) => (
+                <option key={property._id} value={property._id}>{property.title}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Nota de visita</label>
+            <textarea value={newNote} onChange={(e) => setNewNote(e.target.value)} placeholder="Añadir nota de visita..." />
+          </div>
+          <button type="button" className="btn-primary" onClick={handleAddLinkedNote} disabled={!newNote.trim() || !selectedProperty}>
+            Añadir visita
+          </button>
+        </div>
 
         {linkedNotes.length > 0 ? (
-          <ul>
+          <ul className="linked-notes-list">
             {linkedNotes.map((note) => (
-              <li key={note._id}>
-                <strong>{note.property.title}</strong>
-                <p>{note.text}</p>
-                <small>{new Date(note.createdAt).toLocaleString("es-ES")}</small>
+              <li key={note._id} className="linked-note-item">
+                <div className="linked-note-client">
+                  <strong>{note.property.title}</strong>
+                </div>
+                <p className="linked-note-text">{note.text}</p>
+                <small className="linked-note-date">{new Date(note.createdAt).toLocaleString("es-ES")}</small>
               </li>
             ))}
           </ul>
         ) : (
-          <p>No hay visitas registradas.</p>
+          <p className="empty-message">No hay visitas registradas.</p>
         )}
       </div>
 
-      <div>
+      <div className="form-actions">
         <Link to={`/admin/clients/edit/${client._id}`}>
-          <button>Editar</button>
+          <button className="btn-primary">Editar</button>
         </Link>
-
         {!client.isArchived && (
-          <button onClick={handleArchive}>Archivar</button>
+          <button className="btn-warning" onClick={handleArchive}>Archivar</button>
         )}
-
         {client.isArchived && (
-          <button onClick={handleRestore}>Restaurar</button>
+          <button className="btn-success" onClick={handleRestore}>Restaurar</button>
         )}
-
-        <button onClick={handleDelete}>Eliminar</button>
-
+        <button className="btn-danger" onClick={handleDelete}>Eliminar</button>
         <Link to="/admin/clients">
-          <button>Volver al listado</button>
+          <button className="btn-secondary">Volver al listado</button>
         </Link>
       </div>
     </div>

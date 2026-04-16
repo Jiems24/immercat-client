@@ -1,5 +1,7 @@
+import './LoginPage.css'
+
 import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../config/api";
 import { AuthContext } from "../context/auth.context";
@@ -10,11 +12,7 @@ function LoginPage() {
   const [errorMessage, setErrorMessage] = useState(undefined);
 
   const navigate = useNavigate();
-
   const { storeToken, authenticateUser } = useContext(AuthContext);
-
-  const handleEmail = (e) => setEmail(e.target.value);
-  const handlePassword = (e) => setPassword(e.target.value);
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
@@ -34,29 +32,44 @@ function LoginPage() {
 
   return (
     <div className="LoginPage">
-      <h1>Login</h1>
+      <div className="login-card">
+        <div className="login-header">
+          <h1>Acceder</h1>
+          <p>Panel de gestión ImmerCAT</p>
+        </div>
 
-      <form onSubmit={handleLoginSubmit}>
-        <label>Email:</label>
-        <input
-          type="email"
-          name="email"
-          value={email}
-          onChange={handleEmail}
-        />
+        <form onSubmit={handleLoginSubmit} className="login-form">
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="agente@ejemplo.com"
+              required
+            />
+          </div>
 
-        <label>Password:</label>
-        <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={handlePassword}
-        />
+          <div className="form-group">
+            <label>Contraseña</label>
+            <input
+              type="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+            />
+          </div>
 
-        <button type="submit">Login</button>
-      </form>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+          <button type="submit" className="btn-primary login-btn">
+            Entrar
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

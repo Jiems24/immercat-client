@@ -1,3 +1,5 @@
+import './PublicPropertyListPage.css'
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -13,12 +15,10 @@ function PublicPropertyListPage() {
 
   const getProperties = (page = 1) => {
     const params = [];
-
     if (operationType) params.push(`operationType=${operationType}`);
     if (selectedTypes.length > 0) params.push(`propertyType=${selectedTypes.join(",")}`);
     if (maxPrice) params.push(`maxPrice=${maxPrice}`);
     params.push(`page=${page}`);
-
     const query = "?" + params.join("&");
 
     axios
@@ -31,9 +31,7 @@ function PublicPropertyListPage() {
       .catch((error) => console.log(error));
   };
 
-  useEffect(() => {
-    getProperties(1);
-  }, []);
+  useEffect(() => { getProperties(1); }, []);
 
   const handleTypeToggle = (type) => {
     if (selectedTypes.includes(type)) {
@@ -70,104 +68,97 @@ function PublicPropertyListPage() {
 
   return (
     <div className="PublicPropertyListPage">
-      <h1>Inmuebles disponibles</h1>
-
-      <form onSubmit={handleFilter} className="filters">
-        <label>Operación:</label>
-        <select
-          value={operationType}
-          onChange={(e) => setOperationType(e.target.value)}
-        >
-          <option value="">Todas</option>
-          <option value="venta">Venta</option>
-          <option value="alquiler">Alquiler</option>
-        </select>
-
-        <label>Tipo de inmueble:</label>
-        <div className="type-checkboxes">
-          <label>
-            <input
-              type="checkbox"
-              checked={selectedTypes.includes("piso")}
-              onChange={() => handleTypeToggle("piso")}
-            />
-            Piso
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={selectedTypes.includes("casa")}
-              onChange={() => handleTypeToggle("casa")}
-            />
-            Casa
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={selectedTypes.includes("local")}
-              onChange={() => handleTypeToggle("local")}
-            />
-            Local
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={selectedTypes.includes("oficina")}
-              onChange={() => handleTypeToggle("oficina")}
-            />
-            Oficina
-          </label>
-        </div>
-
-        <label>Precio máximo (€):</label>
-        <input
-          type="number"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-          placeholder="Sin límite"
-        />
-
-        <button type="submit">Filtrar</button>
-        <button type="button" onClick={handleClearFilters}>Limpiar filtros</button>
-      </form>
-
-      {properties.length === 0 && (
-        <p>No se han encontrado inmuebles con estos filtros.</p>
-      )}
-
-      <div className="public-properties">
-        {properties.map((property) => (
-          <div key={property._id} className="public-property-card">
-            {property.images && property.images.length > 0 && (
-              <img src={property.images[0]} alt={property.title} width="300" />
-            )}
-            <h3>{property.title}</h3>
-            <p>{property.propertyType} — {property.operationType}</p>
-            <p>{property.price.toLocaleString("es-ES")} €</p>
-            <p>{property.location}</p>
-            {property.squareMeters && <p>{property.squareMeters} m²</p>}
-            {property.rooms && <p>{property.rooms} hab. | {property.bathrooms} baños</p>}
-            {property.agency && (
-              <p>{property.agency.name} — {property.agency.city}</p>
-            )}
-            <Link to={`/properties/${property._id}`}>Ver detalle</Link>
-          </div>
-        ))}
+      <div className="public-list-header">
+        <h1>Inmuebles disponibles</h1>
       </div>
 
-      {totalPages > 1 && (
-        <div className="pagination">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => handlePageChange(page)}
-              disabled={page === currentPage}
-            >
-              {page}
-            </button>
+      <div className="public-list-content">
+        <aside className="filters-sidebar">
+          <form onSubmit={handleFilter}>
+            <h3>Filtros</h3>
+
+            <div className="filter-group">
+              <label>Operación</label>
+              <select value={operationType} onChange={(e) => setOperationType(e.target.value)}>
+                <option value="">Todas</option>
+                <option value="venta">Venta</option>
+                <option value="alquiler">Alquiler</option>
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <label>Tipo de inmueble</label>
+              <div className="type-checkboxes">
+                {["piso", "casa", "local", "oficina"].map((type) => (
+                  <label key={type} className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={selectedTypes.includes(type)}
+                      onChange={() => handleTypeToggle(type)}
+                    />
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="filter-group">
+              <label>Precio máximo (€)</label>
+              <input
+                type="number"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                placeholder="Sin límite"
+              />
+            </div>
+
+            <div className="filter-actions">
+              <button type="submit" className="btn-primary">Filtrar</button>
+              <button type="button" className="btn-secondary" onClick={handleClearFilters}>Limpiar</button>
+            </div>
+          </form>
+        </aside>
+
+        <div className="public-properties-list">
+          {properties.length === 0 && (
+            <p className="empty-message">No se han encontrado inmuebles con estos filtros.</p>
+          )}
+
+          {properties.map((property) => (
+            <div key={property._id} className="public-property-card">
+              {property.images && property.images.length > 0 ? (
+                <img src={property.images[0]} alt={property.title} className="public-card-img" />
+              ) : (
+                <div className="public-card-no-img">Sin foto</div>
+              )}
+              <div className="public-card-info">
+                <h3>{property.title}</h3>
+                <p className="public-card-meta">{property.propertyType} — {property.operationType}</p>
+                <p className="public-card-price">{property.price.toLocaleString("es-ES")} €</p>
+                <p className="public-card-location">{property.location}</p>
+                {property.squareMeters && <p className="public-card-features">{property.squareMeters} m²</p>}
+                {property.rooms && <p className="public-card-features">{property.rooms} hab. | {property.bathrooms} baños</p>}
+                {property.agency && <p className="public-card-agency">{property.agency.name} — {property.agency.city}</p>}
+                <Link to={`/properties/${property._id}`} className="public-card-link">Ver detalle</Link>
+              </div>
+            </div>
           ))}
+
+          {totalPages > 1 && (
+            <div className="pagination">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  disabled={page === currentPage}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

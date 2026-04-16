@@ -1,3 +1,5 @@
+import './App.css'
+
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import IsPrivate from "./components/IsPrivate";
@@ -27,25 +29,27 @@ function App() {
     <div className="App">
       <Navbar />
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/properties" element={<PublicPropertyListPage />} />
-        <Route path="/properties/:propertyId" element={<PublicPropertyDetailsPage />} />
-        <Route path="/login" element={<IsAnon><LoginPage /></IsAnon>} />
-        <Route path="/admin" element={<IsPrivate><DashboardPage /></IsPrivate>} />
-        <Route path="/admin/properties" element={<IsPrivate><PropertyListPage /></IsPrivate>} />
-        <Route path="/admin/properties/create" element={<IsPrivate><PropertyCreatePage /></IsPrivate>} />
-        <Route path="/admin/properties/:propertyId" element={<IsPrivate><PropertyDetailsPage /></IsPrivate>} />
-        <Route path="/admin/properties/edit/:propertyId" element={<IsPrivate><PropertyEditPage /></IsPrivate>} />
-        <Route path="/admin/clients" element={<IsPrivate><ClientListPage /></IsPrivate>} />
-        <Route path="/admin/clients/create" element={<IsPrivate><ClientCreatePage /></IsPrivate>} />
-        <Route path="/admin/clients/:clientId" element={<IsPrivate><ClientDetailsPage /></IsPrivate>} />
-        <Route path="/admin/clients/edit/:clientId" element={<IsPrivate><ClientEditPage /></IsPrivate>} />
-        <Route path="/admin/owners" element={<IsPrivate><OwnerListPage /></IsPrivate>} />
-        <Route path="/admin/owners/create" element={<IsPrivate><OwnerCreatePage /></IsPrivate>} />
-        <Route path="/admin/owners/:ownerId" element={<IsPrivate><OwnerDetailsPage /></IsPrivate>} />
-        <Route path="/admin/owners/edit/:ownerId" element={<IsPrivate><OwnerEditPage /></IsPrivate>} />
-      </Routes>
+      <div className="main-content">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/properties" element={<PublicPropertyListPage />} />
+          <Route path="/properties/:propertyId" element={<PublicPropertyDetailsPage />} />
+          <Route path="/login" element={<IsAnon><LoginPage /></IsAnon>} />
+          <Route path="/admin" element={<IsPrivate><DashboardPage /></IsPrivate>} />
+          <Route path="/admin/properties" element={<IsPrivate><PropertyListPage /></IsPrivate>} />
+          <Route path="/admin/properties/create" element={<IsPrivate><PropertyCreatePage /></IsPrivate>} />
+          <Route path="/admin/properties/:propertyId" element={<IsPrivate><PropertyDetailsPage /></IsPrivate>} />
+          <Route path="/admin/properties/edit/:propertyId" element={<IsPrivate><PropertyEditPage /></IsPrivate>} />
+          <Route path="/admin/clients" element={<IsPrivate><ClientListPage /></IsPrivate>} />
+          <Route path="/admin/clients/create" element={<IsPrivate><ClientCreatePage /></IsPrivate>} />
+          <Route path="/admin/clients/:clientId" element={<IsPrivate><ClientDetailsPage /></IsPrivate>} />
+          <Route path="/admin/clients/edit/:clientId" element={<IsPrivate><ClientEditPage /></IsPrivate>} />
+          <Route path="/admin/owners" element={<IsPrivate><OwnerListPage /></IsPrivate>} />
+          <Route path="/admin/owners/create" element={<IsPrivate><OwnerCreatePage /></IsPrivate>} />
+          <Route path="/admin/owners/:ownerId" element={<IsPrivate><OwnerDetailsPage /></IsPrivate>} />
+          <Route path="/admin/owners/edit/:ownerId" element={<IsPrivate><OwnerEditPage /></IsPrivate>} />
+        </Routes>
+      </div>
     </div>
   );
 }

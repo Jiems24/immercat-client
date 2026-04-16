@@ -1,3 +1,5 @@
+import './OwnerListPage.css'
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -40,26 +42,33 @@ function OwnerListPage() {
   };
 
   return (
-    <div className="OwnerListPage">
-      <h1>{showArchived ? "Propietarios archivados" : "Propietarios"}</h1>
-
-      <button onClick={() => setShowArchived(!showArchived)}>
-        {showArchived ? "Ver activos" : "Ver archivados"}
-      </button>
-
-      {!showArchived && (
-        <Link to="/admin/owners/create">
-          <button>Crear propietario</button>
-        </Link>
-      )}
+    <div className="OwnerListPage page-container">
+      <div className="list-header">
+        <h1>{showArchived ? "Propietarios archivados" : "Propietarios"}</h1>
+        <div className="list-actions">
+          <button
+            className={showArchived ? "btn-primary" : "btn-secondary"}
+            onClick={() => setShowArchived(!showArchived)}
+          >
+            {showArchived ? "Ver activos" : "Ver archivados"}
+          </button>
+          {!showArchived && (
+            <Link to="/admin/owners/create">
+              <button className="btn-primary">Crear propietario</button>
+            </Link>
+          )}
+        </div>
+      </div>
 
       {owners.length === 0 && (
-        <p>{showArchived ? "No hay propietarios archivados." : "No hay propietarios."}</p>
+        <p className="empty-message">{showArchived ? "No hay propietarios archivados." : "No hay propietarios."}</p>
       )}
 
-      {owners.map((owner) => (
-        <OwnerCard key={owner._id} owner={owner} />
-      ))}
+      <div className="list-grid">
+        {owners.map((owner) => (
+          <OwnerCard key={owner._id} owner={owner} />
+        ))}
+      </div>
 
       {totalPages > 1 && (
         <div className="pagination">

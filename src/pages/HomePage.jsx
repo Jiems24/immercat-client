@@ -11,7 +11,7 @@ function HomePage() {
     axios
       .get(`${API_URL}/public/properties`)
       .then((response) => {
-        const lastThree = response.data.slice(-3).reverse();
+        const lastThree = response.data.properties.slice(-3).reverse();
         setFeaturedProperties(lastThree);
       })
       .catch((error) => console.log(error));

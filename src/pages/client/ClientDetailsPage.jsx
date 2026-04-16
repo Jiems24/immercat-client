@@ -36,7 +36,7 @@ function ClientDetailsPage() {
       .get(`${API_URL}/api/properties`, {
         headers: { Authorization: `Bearer ${storedToken}` },
       })
-      .then((response) => setProperties(response.data))
+      .then((response) => setProperties(response.data.properties))
       .catch((error) => console.log(error));
   };
 

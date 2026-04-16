@@ -53,7 +53,7 @@ function PropertyEditPage() {
       .get(`${API_URL}/api/owners`, {
         headers: { Authorization: `Bearer ${storedToken}` },
       })
-      .then((response) => setOwners(response.data))
+      .then((response) => setOwners(response.data.owners))
       .catch((error) => console.log(error));
   }, [propertyId]);
 

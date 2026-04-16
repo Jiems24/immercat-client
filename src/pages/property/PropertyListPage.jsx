@@ -7,25 +7,37 @@ import PropertyCard from "../../components/PropertyCard";
 function PropertyListPage() {
   const [properties, setProperties] = useState([]);
   const [showArchived, setShowArchived] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const storedToken = localStorage.getItem("authToken");
 
-  const getAllProperties = () => {
+  const getAllProperties = (page = 1) => {
     const endpoint = showArchived
-      ? `${API_URL}/api/properties/archived`
-      : `${API_URL}/api/properties`;
+      ? `${API_URL}/api/properties/archived?page=${page}`
+      : `${API_URL}/api/properties?page=${page}`;
 
     axios
       .get(endpoint, {
         headers: { Authorization: `Bearer ${storedToken}` },
       })
-      .then((response) => setProperties(response.data))
+      .then((response) => {
+        setProperties(response.data.properties);
+        setTotalPages(response.data.totalPages);
+        setCurrentPage(response.data.currentPage);
+      })
       .catch((error) => console.log(error));
   };
 
   useEffect(() => {
-    getAllProperties();
+    setCurrentPage(1);
+    getAllProperties(1);
   }, [showArchived]);
+
+  const handlePageChange = (page) => {
+    getAllProperties(page);
+    window.scrollTo(0, 0);
+  };
 
   return (
     <div className="PropertyListPage">
@@ -48,6 +60,20 @@ function PropertyListPage() {
       {properties.map((property) => (
         <PropertyCard key={property._id} property={property} />
       ))}
+
+      {totalPages > 1 && (
+        <div className="pagination">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page)}
+              disabled={page === currentPage}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

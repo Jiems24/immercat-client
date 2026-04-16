@@ -4,43 +4,20 @@ import { API_URL } from "../config/api";
 import { AuthContext } from "../context/auth.context";
 
 function DashboardPage() {
-  const [propertiesActive, setPropertiesActive] = useState(0);
-  const [propertiesArchived, setPropertiesArchived] = useState(0);
-  const [clientsActive, setClientsActive] = useState(0);
-  const [clientsArchived, setClientsArchived] = useState(0);
-  const [ownersActive, setOwnersActive] = useState(0);
-  const [ownersArchived, setOwnersArchived] = useState(0);
-
+  const [stats, setStats] = useState(null);
   const { user } = useContext(AuthContext);
   const storedToken = localStorage.getItem("authToken");
 
   useEffect(() => {
-    const headers = { Authorization: `Bearer ${storedToken}` };
-
-    axios.get(`${API_URL}/api/properties`, { headers })
-      .then((response) => setPropertiesActive(response.data.length))
-      .catch((error) => console.log(error));
-
-    axios.get(`${API_URL}/api/properties/archived`, { headers })
-      .then((response) => setPropertiesArchived(response.data.length))
-      .catch((error) => console.log(error));
-
-    axios.get(`${API_URL}/api/clients`, { headers })
-      .then((response) => setClientsActive(response.data.length))
-      .catch((error) => console.log(error));
-
-    axios.get(`${API_URL}/api/clients/archived`, { headers })
-      .then((response) => setClientsArchived(response.data.length))
-      .catch((error) => console.log(error));
-
-    axios.get(`${API_URL}/api/owners`, { headers })
-      .then((response) => setOwnersActive(response.data.length))
-      .catch((error) => console.log(error));
-
-    axios.get(`${API_URL}/api/owners/archived`, { headers })
-      .then((response) => setOwnersArchived(response.data.length))
+    axios
+      .get(`${API_URL}/api/stats`, {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      })
+      .then((response) => setStats(response.data))
       .catch((error) => console.log(error));
   }, []);
+
+  if (!stats) return <p>Cargando...</p>;
 
   return (
     <div className="DashboardPage">
@@ -50,20 +27,49 @@ function DashboardPage() {
       <div className="dashboard-counters">
         <div className="dashboard-card">
           <h2>Inmuebles</h2>
-          <p><strong>{propertiesActive}</strong> activos</p>
-          <p><strong>{propertiesArchived}</strong> archivados</p>
+          <p><strong>{stats.propertiesActive}</strong> activos</p>
+          <p><strong>{stats.propertiesArchived}</strong> archivados</p>
         </div>
 
         <div className="dashboard-card">
           <h2>Clientes</h2>
-          <p><strong>{clientsActive}</strong> activos</p>
-          <p><strong>{clientsArchived}</strong> archivados</p>
+          <p><strong>{stats.clientsActive}</strong> activos</p>
+          <p><strong>{stats.clientsArchived}</strong> archivados</p>
         </div>
 
         <div className="dashboard-card">
           <h2>Propietarios</h2>
-          <p><strong>{ownersActive}</strong> activos</p>
-          <p><strong>{ownersArchived}</strong> archivados</p>
+          <p><strong>{stats.ownersActive}</strong> activos</p>
+          <p><strong>{stats.ownersArchived}</strong> archivados</p>
+        </div>
+      </div>
+
+      <div className="dashboard-stats">
+        <div className="dashboard-card">
+          <h2>Inmuebles por tipo</h2>
+          {stats.propertiesByType.map((item) => (
+            <p key={item._id}>
+              <strong>{item._id}:</strong> {item.count}
+            </p>
+          ))}
+        </div>
+
+        <div className="dashboard-card">
+          <h2>Inmuebles por operación</h2>
+          {stats.propertiesByOperation.map((item) => (
+            <p key={item._id}>
+              <strong>{item._id}:</strong> {item.count}
+            </p>
+          ))}
+        </div>
+
+        <div className="dashboard-card">
+          <h2>Inmuebles por estado</h2>
+          {stats.propertiesByStatus.map((item) => (
+            <p key={item._id}>
+              <strong>{item._id}:</strong> {item.count}
+            </p>
+          ))}
         </div>
       </div>
     </div>

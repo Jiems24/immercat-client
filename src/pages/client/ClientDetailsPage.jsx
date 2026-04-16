@@ -9,6 +9,7 @@ function ClientDetailsPage() {
   const [client, setClient] = useState(null);
   const [linkedNotes, setLinkedNotes] = useState([]);
   const [properties, setProperties] = useState([]);
+  const [matchingProperties, setMatchingProperties] = useState([]);
   const [selectedProperty, setSelectedProperty] = useState("");
   const [newNote, setNewNote] = useState("");
   const { clientId } = useParams();
@@ -20,7 +21,10 @@ function ClientDetailsPage() {
       .get(`${API_URL}/api/clients/${clientId}`, {
         headers: { Authorization: `Bearer ${storedToken}` },
       })
-      .then((response) => setClient(response.data))
+      .then((response) => {
+        setClient(response.data);
+        getMatchingProperties(response.data);
+      })
       .catch((error) => console.log(error));
   };
 
@@ -39,6 +43,25 @@ function ClientDetailsPage() {
         headers: { Authorization: `Bearer ${storedToken}` },
       })
       .then((response) => setProperties(response.data.properties))
+      .catch((error) => console.log(error));
+  };
+
+  const getMatchingProperties = (clientData) => {
+    if (!clientData.demandType || !clientData.demandPropertyType || !clientData.demandBudget) return;
+
+    axios
+      .get(`${API_URL}/api/properties?limit=100`, {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      })
+      .then((response) => {
+        const filtered = response.data.properties.filter((p) =>
+          p.status === "disponible" &&
+          p.price <= clientData.demandBudget &&
+          p.operationType === (clientData.demandType === "compra" ? "venta" : "alquiler") &&
+          p.propertyType === clientData.demandPropertyType
+        );
+        setMatchingProperties(filtered);
+      })
       .catch((error) => console.log(error));
   };
 
@@ -137,6 +160,26 @@ function ClientDetailsPage() {
           <p className="empty-message">No hay demanda registrada.</p>
         )}
       </div>
+
+      {matchingProperties.length > 0 && (
+        <div className="form-card">
+          <div className="form-section-title">Inmuebles que encajan</div>
+          <ul className="matching-properties-list">
+            {matchingProperties.map((property) => (
+              <li key={property._id} className="matching-property-item">
+                <div className="matching-property-info">
+                  <span className="matching-property-title">{property.title}</span>
+                  <span className="matching-property-price">{property.price.toLocaleString("es-ES")} €</span>
+                  {property.location && <span className="matching-property-location">{property.location}</span>}
+                </div>
+                <Link to={`/admin/properties/${property._id}`}>
+                  <button className="btn-secondary">Ver inmueble</button>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="form-card">
         <div className="form-section-title">Visitas</div>
